@@ -1,52 +1,51 @@
-# 🐳 Agente de Soporte con Python, Gemini y Docker (Contenedores)
+# 🚂 Agente de Soporte con Python, Gemini y Railway
 
-> **Práctica 3 – DAI**: Empaquetado, distribución y ejecución continua del Agente de Soporte en contenedores Docker con inyección segura de credenciales.
+> **Práctica 4 – DAI**: Despliegue en la nube del Agente de Soporte mediante **Railway**, con ejecución continua 24/7, variables de entorno seguras y sin necesidad de mantener un servidor propio.
 
 ---
 
 ## 📋 Descripción General
 
-Este proyecto consiste en la **contenedorización completa** de un agente de soporte basado en Inteligencia Artificial. El agente supervisa en tiempo real una hoja de cálculo de Google Sheets con quejas y comentarios de clientes, analizando cada entrada mediante **Google Gemini 2.5 Flash** para:
+Este proyecto despliega un **agente de soporte basado en Inteligencia Artificial** directamente en la nube usando **Railway**. El agente supervisa en tiempo real una hoja de cálculo de Google Sheets con quejas y comentarios de clientes, analizando cada entrada mediante **Google Gemini 2.5 Flash** para:
 
 1. **Clasificar el departamento responsable**: `Ventas`, `Soporte Técnico` o `Logística`.
 2. **Detectar el sentimiento**: `Positivo`, `Negativo` o `Neutro`.
 3. **Actualizar automáticamente la base de datos** en Google Sheets con los resultados obtenidos.
-4. **Ejecutarse de forma continua o por lotes** dentro de un contenedor **Docker** aislado, reproducible y tolerante a fallas.
+4. **Ejecutarse de forma continua 24/7 en la nube** sin depender de una PC encendida ni de cron jobs externos.
 
 ---
 
-## 🏗️ Arquitectura del Contenedor
+## 🏗️ Arquitectura en la Nube (Railway)
 
 ```
-┌────────────────────────────────────────────────────────────────────────┐
-│                        Máquina Anfitriona (Host)                       │
-│                                                                        │
-│   Archivos locales con secretos:                                       │
-│   ├── .env       ──▶ (GEMINI_API_KEY)                                  │
-│   └── token.env  ──▶ (GOOGLE_TOKEN_JSON)                               │
-│                           │                  │                         │
-│             --env-file .env │                  │ --env-file token.env   │
-│                           ▼                  ▼                         │
-│  ┌──────────────────────────────────────────────────────────────────┐  │
-│  │               Contenedor Docker: agente-soporte                  │  │
-│  │                                                                  │  │
-│  │   Linux Debian (python:3.12-slim) + PYTHONUNBUFFERED=1           │  │
-│  │   Directorio: /app                                               │  │
-│  │                                                                  │  │
-│  │   ┌──────────────────────────────────────────────────────────┐   │  │
-│  │   │                    agente_soporte.py                     │   │  │
-│  │   │                                                          │   │  │
-│  │   │   ┌──────────────┐     ┌──────────────┐   ┌───────────┐  │   │  │
-│  │   │   │ Google Sheets│◀───▶│   Bucle de   │──▶│  Gemini   │  │   │  │
-│  │   │   │  (gspread)   │     │  Revisión    │   │ 2.5 Flash │  │   │  │
-│  │   │   └──────────────┘     └──────────────┘   └───────────┘  │   │  │
-│  │   └──────────────────────────────────────────────────────────┘   │  │
-│  └──────────────────────────────────────────────────────────────────┘  │
-│                                │                                       │
-│                 docker logs -f │ Registros en vivo                     │
-│                                ▼                                       │
-│                    Terminal / Docker Desktop                           │
-└────────────────────────────────────────────────────────────────────────┘
+┌───────────────────────────────────────────────────────────────────────┐
+│                          Railway (Nube)                               │
+│                                                                       │
+│   Variables de entorno (Railway Dashboard):                           │
+│   ├── GEMINI_API_KEY      ──▶ API Key de Google Gemini                │
+│   └── GOOGLE_TOKEN_JSON   ──▶ Token OAuth de Google Sheets            │
+│                    │                      │                           │
+│                    ▼                      ▼                           │
+│  ┌─────────────────────────────────────────────────────────────────┐  │
+│  │              Servicio Railway: agente-soporte-ia                │  │
+│  │                                                                 │  │
+│  │   Imagen Docker (python:3.12-slim) construida desde Dockerfile  │  │
+│  │   Directorio: /app  |  Restart automático ante fallos           │  │
+│  │                                                                 │  │
+│  │   ┌─────────────────────────────────────────────────────────┐   │  │
+│  │   │                   agente_soporte.py                     │   │  │
+│  │   │                                                         │   │  │
+│  │   │  ┌──────────────┐   ┌──────────────┐   ┌────────────┐  │   │  │
+│  │   │  │Google Sheets │◀─▶│  Bucle cada  │──▶│  Gemini    │  │   │  │
+│  │   │  │  (gspread)   │   │  1 minuto    │   │ 2.5 Flash  │  │   │  │
+│  │   │  └──────────────┘   └──────────────┘   └────────────┘  │   │  │
+│  │   └─────────────────────────────────────────────────────────┘   │  │
+│  └─────────────────────────────────────────────────────────────────┘  │
+│                         │                                             │
+│              railway logs │ Registros en vivo                         │
+│                         ▼                                             │
+│                Terminal / Railway Dashboard                           │
+└───────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -54,73 +53,74 @@ Este proyecto consiste en la **contenedorización completa** de un agente de sop
 ## 📁 Estructura del Repositorio
 
 ```
-DAI_Contenedores/
+DAI_Practica_Railway/
 │
-├── Dockerfile                     # Receta de construcción de la imagen Docker
-├── .dockerignore                  # Excluye credenciales y basura de la imagen
-├── .gitignore                     # Protege archivos sensibles de ser subidos a Git
-├── agente_soporte.py              # Script principal del agente autónomo
-├── requirements.txt               # Dependencias de Python
-├── Practica3_Agente_Docker.pdf    # Guía oficial de la Práctica 3
-├── README.md                      # Documentación del proyecto
+├── Dockerfile                        # Receta de construcción de la imagen Docker
+├── railway.json                      # Configuración de despliegue en Railway
+├── .dockerignore                     # Excluye credenciales y caché de la imagen
+├── .gitignore                        # Protege archivos sensibles de Git
+├── agente_soporte.py                 # Script principal del agente autónomo
+├── requirements.txt                  # Dependencias de Python
+├── Practica4_Agente_Railway.pdf      # Guía oficial de la Práctica 4
+├── README.md                         # Documentación del proyecto
 │
 ├── .github/
 │   └── workflows/
-│       └── agente.yml             # Workflow de GitHub Actions (Práctica 2)
+│       └── agente.yml                # Workflow de GitHub Actions (Práctica 2)
 │
-├── docs/                          # Sitio web del proyecto (GitHub Pages)
+├── docs/                             # Sitio web del proyecto (GitHub Pages)
 │   ├── index.html
 │   ├── privacidad.html
 │   ├── terminos.html
 │   └── style.css
 │
-├── .env.example                   # Plantilla pública de variables de entorno
+├── .env.example                      # Plantilla pública de variables de entorno
 │
-├── .env                           # [PRIVADO] API Key de Gemini (ignorado por Git y Docker)
-├── token.env                      # [PRIVADO] Token OAuth Google (ignorado por Git y Docker)
-└── client_secrets.json            # [PRIVADO] Credencial inicial de Google (ignorado)
+├── .env                              # [PRIVADO] API Key de Gemini (ignorado por Git)
+├── token.env                         # [PRIVADO] Token OAuth de Google (ignorado por Git)
+└── client_secrets.json               # [PRIVADO] Credencial inicial de Google (ignorado)
 ```
 
 ---
 
-## ⚙️ Especificación del `Dockerfile`
+## ⚙️ Configuración de Railway (`railway.json`)
 
-El [Dockerfile](file:///c:/Users/ecrui/OneDrive/DAI_Contenedores/Dockerfile) fue construido siguiendo las mejores prácticas de optimización por capas:
-
-```dockerfile
-# 1. Imagen base oficial ligera
-FROM python:3.12-slim
-
-# 2. Salida directa en consola para ver los logs en tiempo real
-ENV PYTHONUNBUFFERED=1
-
-# 3. Directorio de trabajo aislado
-WORKDIR /app
-
-# 4. Copiar e instalar dependencias primero (aprovecha la caché de capas)
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-# 5. Copiar únicamente el script del agente
-COPY agente_soporte.py .
-
-# 6. Punto de entrada flexible para admitir argumentos (ej. --una-vez)
-ENTRYPOINT ["python", "agente_soporte.py"]
+```json
+{
+  "$schema": "https://railway.com/railway.schema.json",
+  "build": {
+    "builder": "DOCKERFILE",
+    "dockerfilePath": "Dockerfile"
+  },
+  "deploy": {
+    "startCommand": "python agente_soporte.py",
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+  }
+}
 ```
 
-### ¿Por qué esta estructura?
-- **Caché eficiente**: Si el código fuente (`agente_soporte.py`) cambia, Docker no reinstala las librerías de Python; reutiliza la capa de `pip install` en cuestión de segundos.
-- **`PYTHONUNBUFFERED=1`**: En contenedores, Python normalmente guarda los mensajes de `print()` en un búfer. Esta variable asegura que cada registro se imprima inmediatamente al consultar `docker logs`.
-- **`ENTRYPOINT` flexible**: Permite ejecutar el contenedor tanto en modo continuo (por defecto) como en ejecuciones puntuales añadiendo `--una-vez` al final del comando.
+### ¿Por qué Railway?
+- **Sin servidor propio**: Railway gestiona la infraestructura completa (VM, red, escalado).
+- **Deploy automático**: Cada `git push` a `main` redespliega el agente automáticamente.
+- **Logs en vivo**: Visibles en el dashboard o con `railway logs` desde la terminal.
+- **Reinicio automático**: Si el agente falla, Railway lo reinicia solo (hasta 10 intentos).
+- **Variables seguras**: Las credenciales se gestionan como variables de entorno cifradas en el dashboard.
 
 ---
 
 ## 🔐 Seguridad y Protección de Secretos
 
-El principio fundamental de Docker es que **las imágenes nunca deben contener credenciales privadas**, ya que cualquier usuario con acceso a la imagen podría extraerlas.
+El principio fundamental es que **ninguna credencial debe estar en el código ni en la imagen Docker**. Railway gestiona los secretos como variables de entorno cifradas que se inyectan en tiempo de ejecución.
 
-### 1. `.dockerignore`
-Garantiza que ningún archivo confidencial sea enviado al contexto de construcción de la imagen:
+### 1. `.gitignore` — Protege el repositorio
+```text
+.env
+token.env
+client_secrets.json
+```
+
+### 2. `.dockerignore` — Protege la imagen Docker
 ```text
 .env
 token.env
@@ -129,93 +129,116 @@ client_secrets.json
 __pycache__/
 ```
 
-### 2. Verificación de la Imagen Limpia
-Para corroborar que la imagen no almacena secretos:
-```bash
-docker run --rm --entrypoint ls agente-soporte -A /app
-```
-**Salida esperada:**
-```text
-agente_soporte.py
-requirements.txt
-```
+### 3. Variables de Entorno en Railway
+Las credenciales se configuran **una sola vez** en el dashboard de Railway:
 
-### 3. Inyección de Credenciales en Runtime
-Las credenciales se entregan al contenedor únicamente en el momento de arranque mediante `--env-file`:
-- `.env`: contiene `GEMINI_API_KEY=tu_api_key`
-- `token.env`: contiene `GOOGLE_TOKEN_JSON={"token": "...", ...}` en una sola línea
+| Variable | Descripción |
+|----------|-------------|
+| `GEMINI_API_KEY` | API Key de Google Gemini AI Studio |
+| `GOOGLE_TOKEN_JSON` | Token OAuth 2.0 de Google Sheets (JSON en una línea) |
 
 ---
 
-## 🚀 Guía de Uso y Comandos
+## 🚀 Guía de Despliegue en Railway
 
-### 1. Construir la Imagen
+### Requisitos Previos
+- Cuenta en [railway.com](https://railway.com) (plan Trial con $5 USD gratuitos)
+- [Node.js](https://nodejs.org/) instalado (para el CLI de Railway)
+- Repositorio Git inicializado
+
+### Paso 1 — Instalar el CLI de Railway
 ```bash
-docker build -t agente-soporte .
+npm install -g @railway/cli
 ```
 
-### 2. Ejecución Única (Modo Batch)
-Procesa todas las filas pendientes en la hoja de cálculo y finaliza el contenedor liberando memoria:
+### Paso 2 — Autenticarse
 ```bash
-docker run --rm --env-file .env --env-file token.env agente-soporte --una-vez
+railway login
+```
+Se abrirá el navegador para iniciar sesión con tu cuenta de Railway.
+
+### Paso 3 — Crear el proyecto en Railway
+```bash
+railway init --name "agente-soporte-ia"
 ```
 
-### 3. Ejecución Continua en Segundo Plano (Daemon)
-Corre el agente de forma persistente como un microservicio que revisa la hoja cada intervalo programado:
+### Paso 4 — Configurar las variables de entorno
 ```bash
-docker run -d --name agente --restart unless-stopped --env-file .env --env-file token.env agente-soporte
+# Variable 1: API Key de Gemini
+railway variables --set "GEMINI_API_KEY=tu_api_key_aqui"
+
+# Variable 2: Token OAuth de Google (JSON en una sola línea)
+railway variables --set 'GOOGLE_TOKEN_JSON={"refresh_token":"...","token_uri":"..."}'
 ```
 
-### 4. Monitoreo y Administración
-- **Ver logs en tiempo real**:
-  ```bash
-  docker logs -f agente
-  ```
-- **Detener el contenedor**:
-  ```bash
-  docker stop agente
-  ```
-- **Volver a iniciarlo**:
-  ```bash
-  docker start agente
-  ```
-- **Eliminar el contenedor**:
-  ```bash
-  docker rm -f agente
-  ```
+> También puedes configurarlas visualmente en: `railway open` → Variables
+
+### Paso 5 — Desplegar el agente
+```bash
+railway up
+```
+Railway construirá la imagen Docker y desplegará el agente en la nube.
+
+### Paso 6 — Ver los logs en tiempo real
+```bash
+railway logs
+```
+
+### Paso 7 — Abrir el dashboard del proyecto
+```bash
+railway open
+```
+
+---
+
+## 🖥️ Comandos Útiles del CLI
+
+| Comando | Descripción |
+|---------|-------------|
+| `railway whoami` | Ver el usuario autenticado |
+| `railway status` | Estado del proyecto vinculado |
+| `railway up` | Desplegar el proyecto |
+| `railway logs` | Ver logs en tiempo real |
+| `railway open` | Abrir el dashboard en el navegador |
+| `railway variables` | Listar variables de entorno |
+| `railway variables --set "CLAVE=valor"` | Definir una variable |
+| `railway project list` | Listar todos los proyectos |
+| `railway down` | Detener el servicio |
 
 ---
 
 ## 📊 Matriz Comparativa: Evolución de las Prácticas
 
-| Característica | Práctica 1 (Local) | Práctica 2 (GitHub Actions) | Práctica 3 (Docker) |
-|---|---|---|---|
-| **Entorno de ejecución** | PC del desarrollador | Runner efímero en la nube | Contenedor reproducible en cualquier SO |
-| **Instalación de dependencias** | Manual con `pip` | En cada corrida del runner | Una sola vez durante el `build` |
-| **Persistencia / Bucle** | Script activo en terminal | Tarea cron programada | Demonio continuo con `schedule` |
-| **Gestión de credenciales** | Archivos `.env` y OAuth | GitHub Secrets cifrados | Inyección segura con `--env-file` |
-| **Observabilidad** | Terminal abierta | Consola de GitHub Actions | `docker logs -f` / Docker Desktop |
-| **Tolerancia a fallos** | Manual si se cierra | Se espera al siguiente cron | `--restart unless-stopped` automático |
+| Característica | Práctica 1 (Local) | Práctica 2 (GitHub Actions) | Práctica 3 (Docker) | Práctica 4 (Railway) |
+|---|---|---|---|---|
+| **Entorno de ejecución** | PC del desarrollador | Runner efímero en la nube | Contenedor en cualquier SO | Nube gestionada (Railway) |
+| **Disponibilidad** | Solo con la PC encendida | Solo cuando dispara el cron | Mientras el host esté activo | 24/7 en la nube |
+| **Instalación dependencias** | Manual con `pip` | En cada corrida del runner | Una vez en el `build` | Una vez en el `build` (Railway) |
+| **Persistencia / Bucle** | Script activo en terminal | Tarea cron programada | Demonio continuo con `schedule` | Servicio continuo en la nube |
+| **Gestión de credenciales** | Archivos `.env` y OAuth | GitHub Secrets cifrados | Inyección con `--env-file` | Variables de entorno en Railway |
+| **Observabilidad** | Terminal abierta | Consola de GitHub Actions | `docker logs -f` | `railway logs` / Dashboard web |
+| **Tolerancia a fallos** | Manual si se cierra | Se espera al siguiente cron | `--restart unless-stopped` | `restartPolicyType: ON_FAILURE` |
+| **Costo de infraestructura** | Electricidad del host | Gratuito (límite de minutos) | Host o VPS externo | Trial $5 USD / mes desde ~$5 |
 
 ---
 
 ## 💡 Preguntas de Reflexión
 
-1. **Diferencia entre una imagen y un contenedor:**  
-   La *imagen* es el molde o plantilla inmutable de solo lectura que contiene el sistema operativo base, las dependencias y el código empaquetado. El *contenedor* es la instancia viva en ejecución creada a partir de esa imagen, con su propio espacio de memoria y aislamiento de procesos.
+1. **¿Qué ventaja ofrece Railway frente a ejecutar Docker localmente?**
+   Railway gestiona toda la infraestructura: el servidor, la red, la disponibilidad y los reinicios automáticos. Con Docker local, si la PC se apaga o falla, el agente deja de funcionar. En Railway, el agente corre 24/7 sin ninguna intervención manual.
 
-2. **Riesgo de omitir `.env` en `.dockerignore`:**  
-   Si se publica la imagen en un registro público como Docker Hub, cualquier persona podría descargarla (`docker pull`) y leer el contenido del `.env`, comprometiendo la API Key de Gemini y consumiendo cuotas o generando costos.
+2. **¿Por qué no se sube `token.env` ni `.env` al repositorio?**
+   Porque contienen credenciales privadas (API keys y tokens OAuth). Si se subieran a GitHub, cualquier persona con acceso al repositorio (incluso si es público) podría robar las claves y acceder a los servicios de Google y Gemini con nuestras cuotas y datos.
 
-3. **Por qué copiar `requirements.txt` antes del script:**  
-   Para optimizar el uso de la caché por capas. Instalar paquetes de Python es un proceso lento; al separar las dependencias del código, cualquier cambio futuro en `agente_soporte.py` se reconstruye en menos de dos segundos sin tener que descargar ni compilar librerías nuevamente.
+3. **¿Cómo gestiona Railway las actualizaciones del código?**
+   Cada vez que se hace `railway up` o se conecta el repositorio de GitHub a Railway, la plataforma detecta los cambios, reconstruye la imagen Docker automáticamente y redespliega el servicio con cero tiempo de inactividad.
 
-4. **Por qué la misma imagen soporta modo continuo y `--una-vez`:**  
-   Gracias al uso de `ENTRYPOINT ["python", "agente_soporte.py"]`. Docker concatena cualquier parámetro adicional al final del entrypoint; por lo tanto, pasar `--una-vez` invoca `python agente_soporte.py --una-vez` sin necesidad de crear imágenes separadas.
+4. **¿Qué hace `restartPolicyType: ON_FAILURE` en `railway.json`?**
+   Indica a Railway que si el proceso del agente termina con un código de error (crash), debe reiniciarlo automáticamente hasta un máximo de 10 intentos. Esto garantiza alta disponibilidad sin intervención manual.
 
-5. **Por qué no basta `docker restart` al renovar el token:**  
-   Porque las variables inyectadas mediante `--env-file` quedan fijadas en la creación del contenedor. Para cargar un token nuevo es indispensable remover el contenedor (`docker rm -f agente`) y ejecutar de nuevo `docker run` con el archivo actualizado.
+5. **¿Cuándo conviene usar Railway vs. GitHub Actions?**
+   - **GitHub Actions**: Ideal para tareas periódicas de baja frecuencia (cada 1-2 horas), sin costo de servidor, pero limitado a 6 horas por ejecución.
+   - **Railway**: Ideal para agentes que deben estar siempre activos, con monitoreo de alta frecuencia (cada minuto o menos), sin depender de cron jobs externos ni tener una PC encendida.
 
-6. **GitHub Actions vs. Contenedor en Servidor:**  
-   - **GitHub Actions:** Óptimo para tareas periódicas poco frecuentes (por ejemplo cada 1 o 2 horas) con bajo consumo y sin costo de servidor.  
-   - **Contenedores (Docker):** Indispensable cuando se requiere monitoreo de alta frecuencia (segundos o minutos), baja latencia de respuesta inmediata, y despliegue estándar en nubes como GCP Cloud Run, AWS ECS o VPS privados.
+6. **¿Qué pasa si el `GOOGLE_TOKEN_JSON` caduca en Railway?**
+   El agente fallará al intentar conectarse a Google Sheets. Hay que renovar el token ejecutando el flujo OAuth localmente, copiar el nuevo JSON y actualizar la variable en Railway con `railway variables --set "GOOGLE_TOKEN_JSON={...nuevo token...}"`. Railway reiniciará el servicio automáticamente con el token actualizado.
