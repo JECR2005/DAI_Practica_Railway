@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agente de Soporte con IA | DAI Práctica 2</title>
+  <meta name="description" content="Agente inteligente que analiza quejas de clientes con Gemini AI, clasifica por departamento y detecta el sentimiento automáticamente usando GitHub Actions." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-glow"></div>
+    <nav class="nav">
+      <span class="nav-logo">🤖 Agente de Soporte</span>
+      <a href="https://github.com" class="nav-btn" id="nav-github-link" target="_blank" rel="noopener">Ver en GitHub →</a>
+    </nav>
+    <div class="hero-content">
+      <div class="badge" id="hero-badge">DAI · Práctica 2</div>
+      <h1>Agente Inteligente<br /><span class="gradient-text">de Soporte al Cliente</span></h1>
+      <p class="hero-subtitle">
+        Analiza comentarios en tiempo real con <strong>Gemini AI</strong>,
+        clasifica por departamento y detecta el sentimiento —
+        todo automatizado con <strong>GitHub Actions</strong>.
+      </p>
+      <div class="hero-actions">
+        <a href="#como-funciona" class="btn-primary" id="hero-cta-primary">Ver cómo funciona</a>
+        <a href="#tecnologias" class="btn-secondary" id="hero-cta-secondary">Stack tecnológico</a>
+      </div>
+    </div>
+    <div class="hero-visual" aria-hidden="true">
+      <div class="terminal" id="hero-terminal">
+        <div class="terminal-bar">
+          <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+          <span class="terminal-title">agente_soporte.py</span>
+        </div>
+        <div class="terminal-body">
+          <div class="line"><span class="prompt">$</span> python agente_soporte.py --una-vez</div>
+          <div class="line out">Cliente de Gemini inicializado correctamente.</div>
+          <div class="line out">Modo: una sola ejecucion (--una-vez)</div>
+          <div class="line sep">═══════════════════════════════════════════════</div>
+          <div class="line out">  Agente de Soporte iniciando ciclo de revision...</div>
+          <div class="line sep">═══════════════════════════════════════════════</div>
+          <div class="line out">Conexion con Google Sheets establecida.</div>
+          <div class="line out"></div>
+          <div class="line out">Procesando fila 2 - Cliente: Ana García</div>
+          <div class="line out"><span class="key">Clasificacion:</span> <span class="val-blue">Soporte Tecnico</span></div>
+          <div class="line out"><span class="key">Sentimiento:  </span> <span class="val-red">Negativo</span></div>
+          <div class="line out">Resultados escritos en Google Sheets (fila 2).</div>
+          <div class="line out"></div>
+          <div class="line success">✓ Ciclo completado. 1 fila(s) procesada(s).</div>
+          <div class="cursor-line"><span class="prompt">$</span><span class="cursor">█</span></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- COMO FUNCIONA -->
+  <section class="section" id="como-funciona">
+    <div class="container">
+      <div class="section-header">
+        <h2>¿Cómo funciona?</h2>
+        <p>Un ciclo automático de 5 pasos que corre cada hora en la nube</p>
+      </div>
+      <div class="steps">
+        <div class="step" id="step-1">
+          <div class="step-icon">📋</div>
+          <div class="step-num">01</div>
+          <h3>Lee Google Sheets</h3>
+          <p>El agente se conecta a la hoja de cálculo y filtra las filas que aún no han sido procesadas (columna F vacía).</p>
+        </div>
+        <div class="step-arrow" aria-hidden="true">→</div>
+        <div class="step" id="step-2">
+          <div class="step-icon">🧠</div>
+          <div class="step-num">02</div>
+          <h3>Analiza con Gemini</h3>
+          <p>Cada comentario se envía a <strong>Gemini 2.5 Flash</strong> que lo clasifica por departamento y detecta el sentimiento.</p>
+        </div>
+        <div class="step-arrow" aria-hidden="true">→</div>
+        <div class="step" id="step-3">
+          <div class="step-icon">✍️</div>
+          <div class="step-num">03</div>
+          <h3>Escribe resultados</h3>
+          <p>La clasificación y el sentimiento se guardan automáticamente en las columnas D, E y F de la hoja.</p>
+        </div>
+        <div class="step-arrow" aria-hidden="true">→</div>
+        <div class="step" id="step-4">
+          <div class="step-icon">⏰</div>
+          <div class="step-num">04</div>
+          <h3>Repite cada hora</h3>
+          <p>GitHub Actions ejecuta el workflow con un <em>cron</em> <code>0 * * * *</code>, sin necesidad de intervención manual.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ANALISIS DEMO -->
+  <section class="section section-dark" id="demo">
+    <div class="container">
+      <div class="section-header light">
+        <h2>Salidas del Agente</h2>
+        <p>Ejemplos reales de cómo Gemini clasifica los comentarios</p>
+      </div>
+      <div class="cards">
+        <div class="card" id="demo-card-1">
+          <div class="card-tag tag-soporte">Soporte Técnico</div>
+          <div class="card-sentiment sentiment-neg">😠 Negativo</div>
+          <p class="card-quote">"Mi aplicación no carga desde el martes y nadie me ha respondido."</p>
+        </div>
+        <div class="card" id="demo-card-2">
+          <div class="card-tag tag-ventas">Ventas</div>
+          <div class="card-sentiment sentiment-pos">😊 Positivo</div>
+          <p class="card-quote">"Excelente oferta de renovación, el precio es muy competitivo."</p>
+        </div>
+        <div class="card" id="demo-card-3">
+          <div class="card-tag tag-logistica">Logística</div>
+          <div class="card-sentiment sentiment-neu">😐 Neutro</div>
+          <p class="card-quote">"¿Cuándo llega mi pedido #4821? No he recibido número de guía."</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECNOLOGIAS -->
+  <section class="section" id="tecnologias">
+    <div class="container">
+      <div class="section-header">
+        <h2>Stack Tecnológico</h2>
+        <p>Herramientas y servicios que hacen funcionar al agente</p>
+      </div>
+      <div class="tech-grid">
+        <div class="tech-item" id="tech-python">
+          <span class="tech-icon">🐍</span>
+          <strong>Python 3.12</strong>
+          <span>Lenguaje principal</span>
+        </div>
+        <div class="tech-item" id="tech-gemini">
+          <span class="tech-icon">✨</span>
+          <strong>Gemini 2.5 Flash</strong>
+          <span>Análisis con IA</span>
+        </div>
+        <div class="tech-item" id="tech-sheets">
+          <span class="tech-icon">📊</span>
+          <strong>Google Sheets</strong>
+          <span>Base de datos</span>
+        </div>
+        <div class="tech-item" id="tech-actions">
+          <span class="tech-icon">⚙️</span>
+          <strong>GitHub Actions</strong>
+          <span>Automatización</span>
+        </div>
+        <div class="tech-item" id="tech-gspread">
+          <span class="tech-icon">🔗</span>
+          <strong>gspread</strong>
+          <span>API de Sheets</span>
+        </div>
+        <div class="tech-item" id="tech-pages">
+          <span class="tech-icon">🌐</span>
+          <strong>GitHub Pages</strong>
+          <span>Esta página</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <p>Desarrollado con ❤️ para <strong>DAI – Diseño con Agentes de Inteligencia Artificial</strong></p>
+      <p class="footer-sub">Práctica 2 · Agente de Soporte con GitHub Actions</p>
+      <div class="footer-links">
+        <a href="index.html">Inicio</a>
+        <a href="privacidad.html">Política de Privacidad</a>
+        <a href="terminos.html">Condiciones del Servicio</a>
+        <a href="https://github.com/JECR2005/DAI_Practica_2_U2" target="_blank" rel="noopener">Repositorio</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

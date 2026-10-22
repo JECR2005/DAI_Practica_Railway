@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Política de Privacidad | Agente de Soporte con IA</title>
+  <meta name="description" content="Política de Privacidad del Agente Inteligente de Soporte al Cliente para el uso de APIs de Google y Google Sheets." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- NAVEGACIÓN -->
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">🤖 Agente de Soporte</a>
+    <a href="https://github.com/JECR2005/DAI_Practica_2_U2" class="nav-btn" target="_blank" rel="noopener">Ver en GitHub →</a>
+  </nav>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="legal-wrapper">
+    <a href="index.html" class="back-nav">← Volver al inicio</a>
+
+    <header class="legal-header">
+      <div class="badge">Privacidad y Seguridad</div>
+      <h1>Política de <span class="gradient-text">Privacidad</span></h1>
+      <div class="legal-meta">
+        <span>Última actualización: 15 de octubre de 2026</span>
+        <span>•</span>
+        <span>Aplicación: Agente de Soporte con IA (DAI Práctica 2)</span>
+      </div>
+    </header>
+
+    <div class="legal-card">
+      <!-- SECCIÓN 1 -->
+      <section class="legal-section">
+        <h2>1. Introducción</h2>
+        <p>
+          Esta Política de Privacidad describe cómo el <strong>Agente Inteligente de Soporte al Cliente</strong>
+          (en adelante, «la Aplicación») recopila, utiliza, procesa y protege la información cuando usted autoriza
+          el acceso mediante los servicios de Google Cloud Platform y OAuth 2.0.
+        </p>
+        <p>
+          La Aplicación es un proyecto académico y funcional desarrollado para la materia de
+          <strong>Diseño con Agentes de Inteligencia Artificial (DAI)</strong>, enfocado en automatizar
+          la clasificación de quejas de clientes y análisis de sentimientos mediante modelos de lenguaje (Gemini AI)
+          y hojas de cálculo de Google Sheets.
+        </p>
+      </section>
+
+      <!-- SECCIÓN 2 -->
+      <section class="legal-section">
+        <h2>2. Información que recopilamos y permisos solicitados</h2>
+        <p>
+          Para su funcionamiento, la Aplicación solicita acceso mediante OAuth 2.0 a los siguientes alcances (scopes) de la API de Google:
+        </p>
+        <ul>
+          <li>
+            <code>https://www.googleapis.com/auth/drive</code> y/o <code>https://spreadsheets.google.com/feeds</code>:
+            Permite acceder únicamente a la hoja de cálculo designada por el usuario (por ejemplo, <em>"Respuestas de Quejas (Base de Datos)"</em>)
+            para leer las quejas ingresadas y registrar las etiquetas de clasificación, sentimiento y fecha de procesamiento.
+          </li>
+        </ul>
+        <div class="legal-callout">
+          <strong>Principio de Privilegio Mínimo:</strong> La Aplicación solo interactúa con la hoja de cálculo explícitamente configurada. No lee correos personales, archivos privados no vinculados de Google Drive ni información personal ajena a dicha hoja.
+        </div>
+      </section>
+
+      <!-- SECCIÓN 3 -->
+      <section class="legal-section">
+        <h2>3. Cómo utilizamos sus datos</h2>
+        <p>Los datos obtenidos de la hoja de cálculo se utilizan estrictamente para:</p>
+        <ol>
+          <li>Identificar registros pendientes de atención (filas no procesadas).</li>
+          <li>Enviar el texto de la queja a la API de Google Gemini (modelo <code>gemini-2.5-flash</code> o superior) para determinar el departamento adecuado (ej. Soporte Técnico, Ventas, Logística) y el sentimiento (Positivo, Negativo, Neutro).</li>
+          <li>Actualizar las columnas correspondientes en su hoja de cálculo con los resultados obtenidos.</li>
+        </ol>
+        <p>
+          <strong>No vendemos ni comercializamos</strong> sus datos bajo ninguna circunstancia. La información no se utiliza para fines publicitarios ni para entrenar modelos de terceros sin autorización.
+        </p>
+      </section>
+
+      <!-- SECCIÓN 4 -->
+      <section class="legal-section">
+        <h2>4. Declaración de Política de Datos de Usuario de las API de Google</h2>
+        <p>
+          El uso y la transferencia a cualquier otra aplicación de la información recibida a través de las API de Google
+          se adhieren a la
+          <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener" style="color: var(--accent2); text-decoration: underline;">
+            Política de Datos de Usuario de los Servicios de las API de Google
+          </a>,
+          incluidos los <strong>Requisitos de Uso Limitado (Limited Use Requirements)</strong>.
+        </p>
+      </section>
+
+      <!-- SECCIÓN 5 -->
+      <section class="legal-section">
+        <h2>5. Almacenamiento, retención y seguridad</h2>
+        <p>
+          La Aplicación se ejecuta de manera automatizada en entornos de ejecución temporal (GitHub Actions o entornos locales autorizados).
+        </p>
+        <ul>
+          <li><strong>Sin base de datos externa:</strong> No mantenemos servidores de base de datos externos que almacenen permanentemente el contenido de sus hojas. Toda la persistencia permanece en su propia cuenta de Google Sheets.</li>
+          <li><strong>Procesamiento en memoria:</strong> Los textos de las consultas son procesados en memoria durante el ciclo de ejecución y descartados una vez devuelta la respuesta a Google Sheets.</li>
+          <li><strong>Credenciales seguras:</strong> Las claves de API y secretos de autenticación se gestionan mediante variables de entorno encriptadas (GitHub Secrets / archivos <code>.env</code> locales protegidos por <code>.gitignore</code>).</li>
+        </ul>
+      </section>
+
+      <!-- SECCIÓN 6 -->
+      <section class="legal-section">
+        <h2>6. Revocación de permisos y control del usuario</h2>
+        <p>
+          El usuario conserva el control absoluto de sus datos en todo momento. Puede revocar el acceso de esta aplicación a su cuenta de Google en cualquier momento ingresando a:
+        </p>
+        <div class="legal-callout">
+          <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener" style="color: var(--accent2); text-decoration: underline; font-weight: 600;">
+            https://myaccount.google.com/permissions
+          </a>
+          <br />
+          Seleccione la aplicación y haga clic en <em>"Quitar acceso"</em>. A partir de ese momento, la Aplicación no podrá volver a conectarse con sus hojas de cálculo.
+        </div>
+      </section>
+
+      <!-- SECCIÓN 7 -->
+      <section class="legal-section">
+        <h2>7. Contacto</h2>
+        <p>
+          Si tiene dudas, solicitudes de aclaración o comentarios relacionados con esta Política de Privacidad o el tratamiento de datos de la Aplicación, puede ponerse en contacto con el equipo del proyecto a través del repositorio oficial de GitHub:
+        </p>
+        <p>
+          <a href="https://github.com/JECR2005/DAI_Practica_2_U2/issues" target="_blank" rel="noopener" style="color: var(--accent2); text-decoration: underline;">
+            https://github.com/JECR2005/DAI_Practica_2_U2
+          </a>
+        </p>
+      </section>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <p>Desarrollado con ❤️ para <strong>DAI – Diseño con Agentes de Inteligencia Artificial</strong></p>
+      <p class="footer-sub">Práctica 2 · Agente de Soporte con GitHub Actions</p>
+      <div class="footer-links">
+        <a href="index.html">Inicio</a>
+        <a href="privacidad.html">Política de Privacidad</a>
+        <a href="terminos.html">Condiciones del Servicio</a>
+        <a href="https://github.com/JECR2005/DAI_Practica_2_U2" target="_blank" rel="noopener">Repositorio</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

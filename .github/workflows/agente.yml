@@ -1,0 +1,52 @@
+# =============================================================
+#  .github/workflows/agente.yml
+#  GitHub Actions Workflow – Agente de Soporte con IA
+#
+#  Ejecuta el agente automaticamente:
+#    - Cada hora (cron)
+#    - Al hacer push a la rama main
+#    - De forma manual (workflow_dispatch)
+# =============================================================
+
+name: Agente de Soporte con IA
+
+on:
+  # Disparo automatico: cada 5 minutos (minimo permitido por GitHub Actions)
+  schedule:
+    - cron: "*/5 * * * *"
+
+  # Disparo al subir cambios a main
+  push:
+    branches:
+      - main
+
+  # Disparo manual desde la interfaz de GitHub
+  workflow_dispatch:
+
+jobs:
+  ejecutar-agente:
+    name: Ejecutar Agente de Soporte
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Descargar el codigo del repositorio
+      - name: Clonar repositorio
+        uses: actions/checkout@v4
+
+      # 2. Configurar Python 3.12
+      - name: Configurar Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # 3. Instalar dependencias desde requirements.txt
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      # 4. Ejecutar el agente en modo una-sola-vez
+      #    Las variables secretas se inyectan como variables de entorno
+      - name: Ejecutar agente (una sola vez)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GOOGLE_TOKEN_JSON: ${{ secrets.GOOGLE_TOKEN_JSON }}
+        run: python agente_soporte.py --una-vez

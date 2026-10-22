@@ -1,0 +1,19 @@
+# Variables de entorno (contienen claves privadas, NO subir a GitHub)
+.env
+token.env
+
+# Credenciales OAuth de Google (contienen datos sensibles, NO subir a GitHub)
+client_secrets.json
+
+# Archivos de cache de autenticacion de gspread
+.cache/
+
+# Bytecode de Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Entornos virtuales
+venv/
+.venv/
+env/
