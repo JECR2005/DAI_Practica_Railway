@@ -1,7 +1,8 @@
 # ============================================================
 #  agente_soporte.py
-#  Practica 2: Agente de Soporte con GitHub Actions
+#  Practica 4: Agente de Soporte desplegado en Railway
 #  Construccion de un Agente de Soporte con Python y Gemini
+#  Despliegue continuo en la nube usando Railway + Docker
 # ============================================================
 
 # ---------------------
